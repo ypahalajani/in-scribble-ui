@@ -3,7 +3,8 @@ import React from 'react';
 
 import HeaderLink from 'components/Header/HeaderLink';
 
-const Dashboard = () => {
+const Dashboard = props => {
+  const push = props.history.push;
   return (
     <>
       <div
@@ -22,6 +23,23 @@ const Dashboard = () => {
             Let's Scribble some prescriptions!
           </span>
         </HeaderLink>
+        <div
+          onClick={() => {
+            push('/login');
+          }}
+        >
+          <HeaderLink to="/main-page">
+            <span>Logout</span>
+            <i
+              style={{
+                marginLeft: 8,
+              }}
+              className="material-icons"
+            >
+              exit_to_app
+            </i>
+          </HeaderLink>
+        </div>
       </div>
       <div />
     </>
