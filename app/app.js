@@ -17,6 +17,10 @@ import FontFaceObserver from 'fontfaceobserver';
 import history from 'utils/history';
 import 'sanitize.css/sanitize.css';
 
+import './helpers/config';
+import './helpers/InkAnalysis';
+import './helpers/inkHelper';
+
 // Import root app
 import App from 'containers/App';
 

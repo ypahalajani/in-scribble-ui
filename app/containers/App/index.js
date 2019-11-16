@@ -14,6 +14,7 @@ import { Switch, Route } from 'react-router-dom';
 import HomePage from 'containers/HomePage/Loadable';
 import FeaturePage from 'containers/FeaturePage/Loadable';
 import NotFoundPage from 'containers/NotFoundPage/Loadable';
+import MainPage from 'containers/MainPage/Loadable';
 
 import GlobalStyle from '../../global-styles';
 
@@ -39,7 +40,7 @@ export default function App() {
       </Helmet>
       {/* <Header /> */}
       <Switch>
-        <Route exact path="/" render={() => <>Hello World!</>} />
+        <Route exact path="/" component={MainPage} />
         <Route path="/features" component={FeaturePage} />
         <Route path="/home" component={HomePage} />
         <Route path="" component={NotFoundPage} />
