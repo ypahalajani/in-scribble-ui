@@ -11,6 +11,7 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  background-color: #ededed;
 
   > div {
     margin-bottom: 8px;
@@ -30,12 +31,36 @@ const ButtonGroup = styled.div`
   }
 `;
 
+const Card = styled.div`
+  background-color: white;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 4px 16px 0px;
+  border-radius: 4px;
+`;
+
+const ListItem = ({ name, frequency }) => {
+  const ListItemWrapper = styled(Card)`
+    padding: 8px;
+    flex-grow: 1;
+
+    > p {
+      margin: 0;
+      text-transform: capitalize;
+    }
+  `;
+  return (
+    <ListItemWrapper>
+      <p>{name}</p>
+      <p>{frequency}</p>
+    </ListItemWrapper>
+  );
+};
+
 class MainPage extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
       loading: false,
-      backendResponse: '',
+      backendResponse: [],
       error: undefined,
     };
   }
@@ -77,7 +102,7 @@ class MainPage extends React.PureComponent {
       .then(response => {
         this.setState({
           loading: false,
-          backendResponse: JSON.stringify(response.data, null, 2),
+          backendResponse: response.data,
         });
       })
       .catch(errorResponse => {
@@ -95,7 +120,30 @@ class MainPage extends React.PureComponent {
 
   handleClearButton = () => {
     this.inkCanvas.clear();
-    this.setState({ loading: false, backendResponse: '', error: undefined });
+    this.setState({ loading: false, backendResponse: [], error: undefined });
+  };
+
+  renderList = list => {
+    const ListWrapper = styled.div`
+      display: flex;
+      flex-direction: column;
+      width: 60%;
+
+      > div {
+        margin-bottom: 8px;
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+      }
+    `;
+    return (
+      <ListWrapper>
+        {list.map((item, index) => (
+          <ListItem key={index} {...item} />
+        ))}
+      </ListWrapper>
+    );
   };
 
   renderContent = () => {
@@ -121,7 +169,13 @@ class MainPage extends React.PureComponent {
         </div>
       );
     } else {
-      return <pre>{this.state.backendResponse}</pre>;
+      return (
+        <>
+          {/* TODO: uncomment this when checking for backend response. */}
+          {/* <pre>{JSON.stringify(this.state.backendResponse, null, 2)}</pre> */}
+          {this.renderList(this.state.backendResponse)}
+        </>
+      );
     }
   };
 
@@ -142,8 +196,12 @@ class MainPage extends React.PureComponent {
           <canvas
             id="inkCanvas"
             width="700"
-            height="350"
+            height="600"
             style={{
+              backgroundColor: 'white',
+              boxShadow: 'rgba(0, 0, 0, 0.16) 0px 4px 16px 0px',
+              borderRadius: 8,
+              backgroundColor: 'white',
               border: '2px solid #CCC',
               touchAction: 'none',
             }}
