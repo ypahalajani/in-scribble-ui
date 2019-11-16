@@ -2,6 +2,8 @@ import React from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
 
+import HeaderLink from 'components/Header/HeaderLink';
+
 const Container = styled.div`
   padding: 16px;
   display: flex;
@@ -59,10 +61,10 @@ class MainPage extends React.PureComponent {
     ${JSON.stringify(requestBody, null, 2)}
     `);
 
-    const basePath = 'https://yahihai.azurewebsites.net/api';
+    const basePath = 'https://isscribble.azurewebsites.net/api';
 
     axios
-      .post(`${basePath}/prescription`, requestBody)
+      .post(`${basePath}/prescription?code=yahihai`, requestBody)
       .then(response => {
         this.setState({
           backendResponse: JSON.stringify(response.data, null, 2),
@@ -72,14 +74,14 @@ class MainPage extends React.PureComponent {
   };
 
   handleClearButton = () => {
-    debugger;
     this.inkCanvas.clear();
+    this.setState({ backendResponse: '' });
   };
 
   render() {
-    console.log('[Mainpage.jsx] inside render');
     return (
       <Container>
+        <HeaderLink to="/">Back to dashboard</HeaderLink>
         <div>
           <canvas
             id="inkCanvas"
@@ -97,7 +99,7 @@ class MainPage extends React.PureComponent {
           </button>
           <button onClick={this.handleClearButton}>Clear</button>
         </ButtonGroup>
-        {this.state.backendResponse && <p>{this.state.backendResponse}</p>}
+        {this.state.backendResponse && <pre>{this.state.backendResponse}</pre>}
       </Container>
     );
   }
