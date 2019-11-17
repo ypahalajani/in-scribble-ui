@@ -2,9 +2,10 @@ import React from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
 import { get, isEmpty } from 'lodash';
-import LoadingIndicator from 'components/LoadingIndicator';
 
+import LoadingIndicator from 'components/LoadingIndicator';
 import HeaderLink from 'components/Header/HeaderLink';
+import ListItemRenderer, { Card } from 'containers/Dashboard/ListRenderer';
 
 const Container = styled.div`
   padding: 16px;
@@ -31,24 +32,20 @@ const ButtonGroup = styled.div`
   }
 `;
 
-const Card = styled.div`
-  background-color: white;
-  box-shadow: rgba(0, 0, 0, 0.16) 0px 4px 16px 0px;
-  border-radius: 4px;
+const ListItemWrapper = styled(Card)`
+  padding: 8px;
+  flex-grow: 1;
+  width: 320px;
+
+  > p {
+    margin: 0;
+    text-transform: capitalize;
+  }
 `;
 
-const ListItem = ({ name, frequency }) => {
-  const ListItemWrapper = styled(Card)`
-    padding: 8px;
-    flex-grow: 1;
-
-    > p {
-      margin: 0;
-      text-transform: capitalize;
-    }
-  `;
+const ListItem = ({ name, frequency, ...restProps }) => {
   return (
-    <ListItemWrapper>
+    <ListItemWrapper {...restProps}>
       <p>{name}</p>
       <p>{frequency}</p>
     </ListItemWrapper>
@@ -63,11 +60,36 @@ class MainPage extends React.PureComponent {
       backendResponse: [],
       error: undefined,
     };
+    this.inputRef = React.createRef();
   }
 
   componentDidMount() {
     this.inkCanvas = new window.InkCanvas('inkCanvas');
   }
+
+  handleMedicationSubmit = () => {
+    console.log(this.inputRef.current.value);
+    debugger;
+    const { email } = JSON.parse(localStorage.getItem('user')) || {};
+    const requestBody = {
+      doctorEmail: email,
+      patientEmail: this.inputRef.current.value,
+      medications: this.state.backendResponse,
+    };
+
+    const basePath = 'https://isscribble.azurewebsites.net/api';
+    const URL = '/submit?code=yahihai';
+    axios
+      .post(`${basePath}${URL}`, requestBody)
+      .then(() => {
+        debugger;
+        // redirect
+        this.props.history.push('/');
+      })
+      .catch(errorResponse => {
+        debugger;
+      });
+  };
 
   handleSubmitButton = () => {
     var strokes = this.inkCanvas.strokes;
@@ -100,6 +122,7 @@ class MainPage extends React.PureComponent {
     axios
       .post(`${basePath}/prescription?code=yahihai`, requestBody)
       .then(response => {
+        debugger;
         this.setState({
           loading: false,
           backendResponse: response.data,
@@ -121,29 +144,6 @@ class MainPage extends React.PureComponent {
   handleClearButton = () => {
     this.inkCanvas.clear();
     this.setState({ loading: false, backendResponse: [], error: undefined });
-  };
-
-  renderList = list => {
-    const ListWrapper = styled.div`
-      display: flex;
-      flex-direction: column;
-      width: 60%;
-
-      > div {
-        margin-bottom: 8px;
-
-        &:last-child {
-          margin-bottom: 0;
-        }
-      }
-    `;
-    return (
-      <ListWrapper>
-        {list.map((item, index) => (
-          <ListItem key={index} {...item} />
-        ))}
-      </ListWrapper>
-    );
   };
 
   renderContent = () => {
@@ -173,7 +173,25 @@ class MainPage extends React.PureComponent {
         <>
           {/* TODO: uncomment this when checking for backend response. */}
           {/* <pre>{JSON.stringify(this.state.backendResponse, null, 2)}</pre> */}
-          {this.renderList(this.state.backendResponse)}
+          <ListItemRenderer data={this.state.backendResponse}>
+            {(item, index) => <ListItem key={index} {...item} />}
+          </ListItemRenderer>
+          <input
+            type="email"
+            placeholder="Enter email address of patient"
+            ref={this.inputRef}
+            style={{ width: '320px' }}
+          />
+          <button
+            type="button"
+            onClick={this.handleMedicationSubmit}
+            style={{
+              marginTop: 8,
+            }}
+            disabled={this.state.backendResponse.length === 0}
+          >
+            Submit
+          </button>
         </>
       );
     }
@@ -208,9 +226,7 @@ class MainPage extends React.PureComponent {
           />
         </div>
         <ButtonGroup>
-          <button onClick={this.handleSubmitButton}>
-            Let Backend know what you are writing
-          </button>
+          <button onClick={this.handleSubmitButton}>Recognize</button>
           <button onClick={this.handleClearButton}>Clear</button>
         </ButtonGroup>
         {this.renderContent()}
