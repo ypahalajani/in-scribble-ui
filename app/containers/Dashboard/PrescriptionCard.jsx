@@ -50,7 +50,8 @@ class PrescriptionCard extends React.PureComponent {
       return <LoadingIndicator />;
     }
 
-    const { role = 'doctor' } = JSON.parse(localStorage.getItem('user')) || {};
+    const { role = 'doctor' } =
+      JSON.parse(localStorage.getItem('user')) || '{}';
 
     return (
       <div

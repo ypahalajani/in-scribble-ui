@@ -22,7 +22,8 @@ class Dashboard extends React.PureComponent {
 
   render = () => {
     const push = this.props.history.push;
-    const { role = 'doctor' } = JSON.parse(localStorage.getItem('user')) || {};
+    const { role = 'doctor' } =
+      JSON.parse(localStorage.getItem('user')) || '{}';
     console.log('role', role);
     return (
       <>

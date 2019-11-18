@@ -17,7 +17,7 @@ import GlobalStyle from '../../global-styles';
 const AppWrapper = styled.div``;
 
 const PrivateRoute = ({ component: Component, ...rest }) => {
-  const user = localStorage.getItem('user') || {};
+  const user = localStorage.getItem('user') || '{}';
   const { authenticated: userAuthenticated = false } = JSON.parse(user);
   return (
     <Route

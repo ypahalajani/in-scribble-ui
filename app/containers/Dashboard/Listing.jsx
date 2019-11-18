@@ -82,7 +82,7 @@ class Listing extends React.PureComponent {
 
   componentDidMount() {
     const { email, role = 'doctor' } =
-      JSON.parse(localStorage.getItem('user')) || {};
+      JSON.parse(localStorage.getItem('user')) || '{}';
     const basePath = 'https://isscribble.azurewebsites.net/api';
     const getListURL = `/${
       role === 'doctor' ? 'getdoctorprescriptions' : 'getpatientprescriptions'
